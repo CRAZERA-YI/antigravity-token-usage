@@ -27,7 +27,7 @@ Choose whichever method is easiest for you — no `npm install` or build step is
 ### Option 1: Antigravity CLI (Recommended if `agy` is installed)
 
 ```bash
-agy plugin install https://github.com/<your-username>/antigravity-token-usage
+agy plugin install https://github.com/CRAZERA-YI/antigravity-token-usage
 ```
 
 ### Option 2: Direct `git clone` into Antigravity's Global Plugins Folder
@@ -35,19 +35,19 @@ agy plugin install https://github.com/<your-username>/antigravity-token-usage
 **Windows (PowerShell):**
 
 ```powershell
-git clone https://github.com/<your-username>/antigravity-token-usage.git "$env:USERPROFILE\.gemini\config\plugins\token-usage"
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git "$env:USERPROFILE\.gemini\config\plugins\token-usage"
 ```
 
 **macOS / Linux:**
 
 ```bash
-git clone https://github.com/<your-username>/antigravity-token-usage.git ~/.gemini/config/plugins/token-usage
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git ~/.gemini/config/plugins/token-usage
 ```
 
 ### Option 3: Clone & Run the Install Script
 
 ```bash
-git clone https://github.com/<your-username>/antigravity-token-usage.git
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git
 cd antigravity-token-usage
 ```
 

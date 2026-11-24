@@ -27,7 +27,7 @@
 ### 方式一：通过 Antigravity CLI 一键安装（推荐，已安装 `agy` 时）
 
 ```bash
-agy plugin install https://github.com/<your-username>/antigravity-token-usage
+agy plugin install https://github.com/CRAZERA-YI/antigravity-token-usage
 ```
 
 ### 方式二：直接 `git clone` 到 Antigravity 全局插件目录
@@ -35,19 +35,19 @@ agy plugin install https://github.com/<your-username>/antigravity-token-usage
 **Windows（PowerShell）：**
 
 ```powershell
-git clone https://github.com/<your-username>/antigravity-token-usage.git "$env:USERPROFILE\.gemini\config\plugins\token-usage"
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git "$env:USERPROFILE\.gemini\config\plugins\token-usage"
 ```
 
 **macOS / Linux：**
 
 ```bash
-git clone https://github.com/<your-username>/antigravity-token-usage.git ~/.gemini/config/plugins/token-usage
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git ~/.gemini/config/plugins/token-usage
 ```
 
 ### 方式三：克隆后运行安装脚本
 
 ```bash
-git clone https://github.com/<your-username>/antigravity-token-usage.git
+git clone https://github.com/CRAZERA-YI/antigravity-token-usage.git
 cd antigravity-token-usage
 ```
 

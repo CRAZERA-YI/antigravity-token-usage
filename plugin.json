@@ -3,6 +3,12 @@
   "displayName": "Token Usage",
   "version": "1.0.0",
   "description": "View and analyze Antigravity token usage across conversations, models, and dates with an interactive bilingual (EN/ZH) dashboard and chat tools.",
+  "author": {
+    "name": "CRAZERA-YI",
+    "url": "https://github.com/CRAZERA-YI"
+  },
+  "homepage": "https://github.com/CRAZERA-YI/antigravity-token-usage",
+  "repository": "https://github.com/CRAZERA-YI/antigravity-token-usage",
   "logo": "assets/logo.svg",
   "suggestedPrompts": [
     "Open the Token Usage dashboard",
