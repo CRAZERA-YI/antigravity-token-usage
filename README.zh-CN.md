@@ -13,6 +13,20 @@
 
 ---
 
+## 界面预览
+
+> *以下效果图均基于脱敏演示数据渲染。*
+
+### 简体中文（浅色主题）
+
+![Token 用量统计面板 - 简体中文浅色主题](./assets/preview-zh-light.png)
+
+### English（深色主题）
+
+![Token Usage Dashboard - English Dark](./assets/preview-en-dark.png)
+
+---
+
 ## 环境要求
 
 - [Google Antigravity](https://antigravity.google/)（App / CLI / IDE 均可）

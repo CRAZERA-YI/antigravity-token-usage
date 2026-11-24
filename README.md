@@ -13,6 +13,20 @@ A lightweight, 100% local **Google Antigravity** plugin (MCP App + Skill) for vi
 
 ---
 
+## Preview
+
+> *Screenshots below are rendered with synthetic demo data.*
+
+### English (Dark Theme)
+
+![Token Usage Dashboard - English Dark](./assets/preview-en-dark.png)
+
+### Simplified Chinese (Light Theme)
+
+![Token Usage Dashboard - Chinese Light](./assets/preview-zh-light.png)
+
+---
+
 ## Requirements
 
 - [Google Antigravity](https://antigravity.google/) (App, CLI, or IDE)
