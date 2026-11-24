@@ -1,0 +1,20 @@
+{
+  "name": "antigravity-token-usage",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bilingual (EN/ZH) Token Usage MCP App plugin for Google Antigravity",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node server/bundle.mjs",
+    "dev": "node src/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

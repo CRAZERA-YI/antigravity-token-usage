@@ -1,0 +1,12 @@
+{
+  "name": "token-usage",
+  "displayName": "Token Usage",
+  "version": "1.0.0",
+  "description": "View and analyze Antigravity token usage across conversations, models, and dates with an interactive bilingual (EN/ZH) dashboard and chat tools.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Open the Token Usage dashboard",
+    "Show my token usage and cache hit rate for today and the last 7 days",
+    "打开 Token 用量面板并按模型统计所有对话的消耗"
+  ]
+}

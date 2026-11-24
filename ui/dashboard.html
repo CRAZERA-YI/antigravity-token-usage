@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Token Usage</title>
+  <style>
+    :root {
+      --bg-1: var(--color-background-primary, #ffffff);
+      --bg-2: var(--color-background-secondary, #f6f8fa);
+      --bg-3: var(--color-background-tertiary, #eef2f6);
+      --text-1: var(--color-text-primary, #111827);
+      --text-2: var(--color-text-secondary, #4b5563);
+      --text-3: var(--color-text-tertiary, #6b7280);
+      --border-1: var(--color-border-primary, #e5e7eb);
+      --border-2: var(--color-border-secondary, #d1d5db);
+      --accent: var(--color-ring-primary, #4f46e5);
+      --c-fresh: #6366f1;
+      --c-cache: #0ea5e9;
+      --c-output: #10b981;
+      --radius: 10px;
+      --font: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    html[data-theme="dark"] {
+      --bg-1: var(--color-background-primary, #13151a);
+      --bg-2: var(--color-background-secondary, #1b1f27);
+      --bg-3: var(--color-background-tertiary, #252b36);
+      --text-1: var(--color-text-primary, #f3f4f6);
+      --text-2: var(--color-text-secondary, #cbd5e1);
+      --text-3: var(--color-text-tertiary, #94a3b8);
+      --border-1: var(--color-border-primary, #2b3240);
+      --border-2: var(--color-border-secondary, #3b4456);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-1);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      font-size: 11.5px;
+      color: var(--text-3);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .seg {
+      display: inline-flex;
+      background: var(--bg-2);
+      border: 1px solid var(--border-1);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .seg button {
+      border: 0;
+      background: transparent;
+      color: var(--text-2);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .seg button:hover { color: var(--text-1); }
+    .seg button.active {
+      background: var(--bg-1);
+      color: var(--text-1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      font-weight: 600;
+    }
+
+    select, input[type="search"], .btn {
+      font: inherit;
+      font-size: 12px;
+      background: var(--bg-2);
+      color: var(--text-1);
+      border: 1px solid var(--border-1);
+      border-radius: 8px;
+      padding: 5px 10px;
+      outline: none;
+    }
+    select:focus, input[type="search"]:focus { border-color: var(--accent); }
+    input[type="search"] {
+      min-width: 160px;
+      flex: 1 1 160px;
+      max-width: 260px;
+    }
+    .btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn:hover {
+      background: var(--bg-3);
+      border-color: var(--border-2);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+    .lang-btn {
+      font-weight: 600;
+      min-width: 58px;
+      justify-content: center;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 10px;
+    }
+    .kpi {
+      background: var(--bg-2);
+      border: 1px solid var(--border-1);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .kpi-label {
+      font-size: 11.5px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .kpi-val {
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--bg-3);
+      color: var(--text-2);
+      font-variant-numeric: tabular-nums;
+    }
+    .badge-good {
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+    }
+    .badge-info {
+      background: rgba(14, 165, 233, 0.14);
+      color: #0ea5e9;
+    }
+
+    .card {
+      background: var(--bg-2);
+      border: 1px solid var(--border-1);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 650;
+      margin: 0;
+    }
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-2);
+      flex-wrap: wrap;
+    }
+
+    .chart-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 130px;
+      padding: 8px 4px 0;
+      border-bottom: 1px solid var(--border-1);
+      overflow-x: auto;
+    }
+    .bar-col {
+      flex: 1 1 28px;
+      min-width: 24px;
+      max-width: 56px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .bar-stack {
+      width: 100%;
+      max-width: 32px;
+      display: flex;
+      flex-direction: column-reverse;
+      border-radius: 4px 4px 0 0;
+      overflow: hidden;
+      min-height: 2px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .bar-col:hover .bar-stack {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .bar-fresh { background: var(--c-fresh); }
+    .bar-cache { background: var(--c-cache); }
+    .bar-output { background: var(--c-output); }
+    .bar-label {
+      font-size: 10px;
+      color: var(--text-3);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      padding-bottom: 4px;
+    }
+    .chart-hover {
+      font-size: 11.5px;
+      color: var(--text-2);
+      min-height: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .comp-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-3);
+      overflow: hidden;
+      display: flex;
+    }
+    .comp-bar > div { height: 100%; }
+
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-3);
+      font-size: 11px;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border-1);
+      white-space: nowrap;
+    }
+    td {
+      padding: 8px;
+      border-bottom: 1px solid var(--border-1);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .num { text-align: right; white-space: nowrap; }
+    .clickable-row {
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .clickable-row:hover { background: var(--bg-3); }
+    .clickable-row.selected { background: rgba(79, 70, 229, 0.12); }
+
+    .model-pill {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: var(--bg-3);
+      color: var(--text-1);
+      white-space: nowrap;
+    }
+    .mini-bar {
+      width: 60px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--bg-3);
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    .mini-bar-fill {
+      height: 100%;
+      background: var(--c-cache);
+      border-radius: 999px;
+    }
+
+    .conv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .conv-item {
+      background: var(--bg-1);
+      border: 1px solid var(--border-1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .conv-summary {
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.12s;
+    }
+    .conv-summary:hover { background: var(--bg-3); }
+    .conv-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .conv-title {
+      font-weight: 600;
+      color: var(--text-1);
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .conv-total {
+      font-weight: 700;
+      font-size: 13.5px;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-1);
+    }
+    .conv-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--text-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .conv-metrics {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .conv-detail {
+      border-top: 1px solid var(--border-1);
+      background: var(--bg-2);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .empty, .loading, .error-box {
+      padding: 28px 16px;
+      text-align: center;
+      color: var(--text-3);
+      background: var(--bg-2);
+      border: 1px solid var(--border-1);
+      border-radius: var(--radius);
+    }
+    .error-box {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="loading">Loading Token Usage...</div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const I18N = {
+        en: {
+          appTitle: 'Token Usage',
+          loadingInit: 'Reading local Antigravity transcripts...',
+          loadingData: 'Loading token usage data...',
+          emptyResponse: 'Server returned empty data',
+          initFailed: 'MCP App initialization failed: ',
+          subtitleStats: (convs, turns, time) =>
+            `${convs} conversations · ${turns} model turns · Updated ${time}`,
+          ranges: [
+            ['today', 'Today'],
+            ['7d', '7D'],
+            ['30d', '30D'],
+            ['all', 'All'],
+          ],
+          allModels: (n) => `All Models (${n})`,
+          filterModelTitle: 'Filter by model',
+          refresh: '↻ Refresh',
+          refreshing: 'Refreshing...',
+          langSwitchLabel: '中文',
+          langSwitchTitle: 'Switch to Chinese (简体中文)',
+          exactTooltip: (v) => `Exact: ${v}`,
+          kpiTotal: 'Total Tokens',
+          turnsBadge: (n) => `${n} turns`,
+          kpiTotalSub: (exact, avg) => `Exact ${exact} · Avg ${avg}/turn`,
+          kpiFresh: 'Fresh Input',
+          kpiFreshSub: (totIn) => `Uncached · Total Input ${totIn}`,
+          kpiCache: 'Cache Read',
+          hitBadge: (p) => `Hit ${p}`,
+          kpiCacheSub: (p) => `${p} of total input · Cached context`,
+          kpiOutput: 'Output Tokens',
+          peakBadge: (v) => `Peak ${v}`,
+          kpiOutputSub: (v) => `Thinking & replies · Max context ${v}`,
+          compTitle: (f, c, o) => `Fresh Input ${f} / Cache Read ${c} / Output ${o}`,
+          dailyTitle: 'Daily Trend',
+          legendFresh: 'Fresh Input',
+          legendCache: 'Cache Read',
+          legendOutput: 'Output',
+          noDaily: 'No daily records in this filter range.',
+          dayTooltip: (d, tot) => `${d}: Total ${tot}`,
+          dayHover: (d, tot, fresh, cache, out, turns) =>
+            `<strong>${d}</strong>: Total <strong>${tot}</strong> (Fresh ${fresh} · Cache ${cache} · Output ${out} · ${turns} turns)`,
+          byModelTitle: 'By Model',
+          byModelHint: 'Click a row to filter by model',
+          noModels: 'No model data available.',
+          colModel: 'Model',
+          colChats: 'Chats',
+          colTurns: 'Turns',
+          colFresh: 'Fresh Input',
+          colCache: 'Cache Read',
+          colOutput: 'Output',
+          colCacheHit: 'Cache Hit',
+          colTotal: 'Total',
+          convsTitle: (n) => `Conversations (${n})`,
+          searchPlaceholder: 'Search prompt or ID...',
+          sortTitle: 'Sort conversations',
+          sortRecent: 'Most Recent',
+          sortTotal: 'Most Total Tokens',
+          sortOutput: 'Most Output Tokens',
+          sortTurns: 'Most Turns',
+          noConvs: 'No matching conversations found.',
+          convTurns: (n) => `${n} turns`,
+          convFresh: (v) => `Fresh ${v}`,
+          convCache: (v, p) => `Cache ${v} (${p})`,
+          convOut: (v) => `Out ${v}`,
+          convPeak: (v) => `Peak ctx ${v}`,
+          loadingDetail: 'Loading turn-by-turn breakdown...',
+          noDetail: 'No details available.',
+          detailMeta: (id, n) => `Conversation ID: <code>${id}</code> · ${n} model turns`,
+          colStep: 'Step',
+          colTime: 'Time',
+          colContext: 'Context Size',
+          colTurnTotal: 'Turn Total',
+        },
+        zh: {
+          appTitle: 'Token 用量统计',
+          loadingInit: '正在读取本地 Antigravity 对话记录...',
+          loadingData: '正在加载 Token 用量数据...',
+          emptyResponse: '服务器返回了空数据',
+          initFailed: 'MCP App 初始化失败：',
+          subtitleStats: (convs, turns, time) =>
+            `已统计 ${convs} 个对话 · ${turns} 次模型调用 · 更新于 ${time}`,
+          ranges: [
+            ['today', '今天'],
+            ['7d', '近 7 天'],
+            ['30d', '近 30 天'],
+            ['all', '全部'],
+          ],
+          allModels: (n) => `全部模型 (${n})`,
+          filterModelTitle: '按模型筛选',
+          refresh: '↻ 刷新',
+          refreshing: '刷新中...',
+          langSwitchLabel: 'EN',
+          langSwitchTitle: 'Switch to English',
+          exactTooltip: (v) => `精确值：${v}`,
+          kpiTotal: '总 Token 消耗',
+          turnsBadge: (n) => `${n} 轮`,
+          kpiTotalSub: (exact, avg) => `精确 ${exact} · 均 ${avg}/轮`,
+          kpiFresh: '新输入 Token',
+          kpiFreshSub: (totIn) => `非缓存输入 · 总输入 ${totIn}`,
+          kpiCache: '缓存读取 Token',
+          hitBadge: (p) => `命中 ${p}`,
+          kpiCacheSub: (p) => `占总输入 ${p} · 节省重算开销`,
+          kpiOutput: '输出 Token',
+          peakBadge: (v) => `峰值 ${v}`,
+          kpiOutputSub: (v) => `含思考与回复 · 最大单轮上下文 ${v}`,
+          compTitle: (f, c, o) => `新输入 ${f} / 缓存读取 ${c} / 输出 ${o}`,
+          dailyTitle: '每日消耗趋势',
+          legendFresh: '新输入',
+          legendCache: '缓存读取',
+          legendOutput: '输出',
+          noDaily: '当前筛选范围内暂无每日记录',
+          dayTooltip: (d, tot) => `${d}：总计 ${tot}`,
+          dayHover: (d, tot, fresh, cache, out, turns) =>
+            `<strong>${d}</strong>：总计 <strong>${tot}</strong>（新输入 ${fresh} · 缓存 ${cache} · 输出 ${out} · ${turns} 轮）`,
+          byModelTitle: '按模型分布',
+          byModelHint: '点击模型行可快速筛选',
+          noModels: '暂无模型数据',
+          colModel: '模型',
+          colChats: '对话',
+          colTurns: '轮次',
+          colFresh: '新输入',
+          colCache: '缓存读取',
+          colOutput: '输出',
+          colCacheHit: '缓存命中率',
+          colTotal: '总 Token',
+          convsTitle: (n) => `对话明细 (${n})`,
+          searchPlaceholder: '搜索对话内容或 ID...',
+          sortTitle: '排序方式',
+          sortRecent: '最近活跃',
+          sortTotal: '总 Token 最多',
+          sortOutput: '输出 Token 最多',
+          sortTurns: '调用轮次最多',
+          noConvs: '没有匹配的对话记录',
+          convTurns: (n) => `${n} 轮`,
+          convFresh: (v) => `新输入 ${v}`,
+          convCache: (v, p) => `缓存 ${v} (${p})`,
+          convOut: (v) => `输出 ${v}`,
+          convPeak: (v) => `峰值上下文 ${v}`,
+          loadingDetail: '正在加载单轮明细...',
+          noDetail: '暂无明细',
+          detailMeta: (id, n) => `Conversation ID: <code>${id}</code> · 共 ${n} 次模型调用`,
+          colStep: 'Step',
+          colTime: '时间',
+          colContext: '上下文总量',
+          colTurnTotal: '本轮总计',
+        },
+      };
+
+      function detectLangFromLocale(loc) {
+        if (typeof loc === 'string' && /^zh\b/i.test(loc.trim())) return 'zh';
+        return 'en';
+      }
+
+      const PROTOCOL_VERSION = '2026-01-26';
+      let nextReqId = 1;
+      const pending = new Map();
+      let hostContext = {};
+      let receivedInitialResult = false;
+
+      const state = {
+        lang: detectLangFromLocale(navigator.language || 'en'),
+        langUserPinned: false,
+        data: null,
+        loading: true,
+        error: null,
+        range: 'all',
+        model: 'all',
+        query: '',
+        sortBy: 'updatedAt',
+        hoveredDay: null,
+        expandedConvId: null,
+        convDetails: new Map(),
+        convLoading: new Set(),
+      };
+
+      function t() {
+        return I18N[state.lang] || I18N.en;
+      }
+
+      function postToHost(msg) {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(msg, '*');
+        }
+      }
+
+      function sendRequest(method, params) {
+        const id = nextReqId++;
+        return new Promise((resolve, reject) => {
+          pending.set(id, { resolve, reject });
+          postToHost({ jsonrpc: '2.0', id, method, params });
+          setTimeout(() => {
+            if (pending.has(id)) {
+              pending.delete(id);
+              reject(new Error('Request timed out: ' + method));
+            }
+          }, 15000);
+        });
+      }
+
+      function sendNotification(method, params) {
+        postToHost({ jsonrpc: '2.0', method, params: params || {} });
+      }
+
+      function applyHostContext(ctx) {
+        if (!ctx || typeof ctx !== 'object') return;
+        hostContext = Object.assign({}, hostContext, ctx);
+        if (ctx.theme === 'dark' || ctx.theme === 'light') {
+          document.documentElement.dataset.theme = ctx.theme;
+          document.documentElement.style.colorScheme = ctx.theme;
+        }
+        if (ctx.locale && !state.langUserPinned) {
+          const detected = detectLangFromLocale(ctx.locale);
+          if (detected !== state.lang) {
+            state.lang = detected;
+            document.documentElement.lang = detected === 'zh' ? 'zh-CN' : 'en';
+          }
+        }
+        const vars = ctx.styles && ctx.styles.variables;
+        if (vars && typeof vars === 'object') {
+          for (const [k, v] of Object.entries(vars)) {
+            if (typeof k === 'string' && typeof v === 'string') {
+              document.documentElement.style.setProperty(k, v);
+            }
+          }
+        }
+      }
+
+      function reportSize() {
+        const el = document.documentElement;
+        const height = Math.ceil(document.body.scrollHeight || el.scrollHeight || 0);
+        const width = Math.ceil(document.body.scrollWidth || el.scrollWidth || 0);
+        if (height > 0) {
+          sendNotification('ui/notifications/size-changed', { width, height });
+        }
+      }
+
+      async function callServerTool(name, args) {
+        const result = await sendRequest('tools/call', {
+          name,
+          arguments: args || {},
+        });
+        if (result && result.isError) {
+          const msg = (result.content && result.content[0] && result.content[0].text) || 'Tool error';
+          throw new Error(msg);
+        }
+        return result;
+      }
+
+      function handleToolResult(result) {
+        if (!result) return;
+        const payload = result.structuredContent;
+        if (payload && payload.summary) {
+          receivedInitialResult = true;
+          state.data = payload;
+          state.loading = false;
+          state.error = null;
+          if (payload.filters) {
+            state.range = payload.filters.range || state.range;
+            state.model = payload.filters.model || state.model;
+            state.query = payload.filters.query || '';
+            state.sortBy = payload.filters.sortBy || state.sortBy;
+            if (!state.langUserPinned && (payload.filters.lang === 'zh' || payload.filters.lang === 'en')) {
+              state.lang = payload.filters.lang;
+              document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : 'en';
+            }
+          }
+          render();
+        }
+      }
+
+      window.addEventListener('message', (event) => {
+        const msg = event.data;
+        if (!msg || typeof msg !== 'object' || msg.jsonrpc !== '2.0') return;
+
+        if (msg.id !== undefined && !msg.method) {
+          const entry = pending.get(msg.id);
+          if (entry) {
+            pending.delete(msg.id);
+            if (msg.error) {
+              entry.reject(new Error(msg.error.message || JSON.stringify(msg.error)));
+            } else {
+              entry.resolve(msg.result);
+            }
+          }
+          return;
+        }
+
+        if (msg.id !== undefined && msg.method) {
+          if (msg.method === 'ping') {
+            postToHost({ jsonrpc: '2.0', id: msg.id, result: {} });
+          } else {
+            postToHost({
+              jsonrpc: '2.0',
+              id: msg.id,
+              error: { code: -32601, message: 'Method not found: ' + msg.method },
+            });
+          }
+          return;
+        }
+
+        if (msg.method === 'ui/notifications/host-context-changed') {
+          applyHostContext(msg.params);
+          render();
+        } else if (msg.method === 'ui/notifications/tool-input') {
+          const args = msg.params && msg.params.arguments;
+          if (args) {
+            if (args.range) state.range = args.range;
+            if (args.model) state.model = args.model;
+            if (args.query !== undefined) state.query = args.query;
+            if (args.sortBy) state.sortBy = args.sortBy;
+            if (!state.langUserPinned && (args.lang === 'zh' || args.lang === 'en')) {
+              state.lang = args.lang;
+            }
+          }
+        } else if (msg.method === 'ui/notifications/tool-result') {
+          handleToolResult(msg.params);
+        }
+      });
+
+      async function fetchUsage() {
+        state.loading = true;
+        state.error = null;
+        render();
+        try {
+          const res = await callServerTool('get_token_usage', {
+            range: state.range,
+            model: state.model,
+            query: state.query,
+            sortBy: state.sortBy,
+            limit: 150,
+            lang: state.lang,
+          });
+          if (res && res.structuredContent) {
+            state.data = res.structuredContent;
+            state.loading = false;
+            state.error = null;
+          } else {
+            state.loading = false;
+            state.error = t().emptyResponse;
+          }
+        } catch (err) {
+          state.loading = false;
+          state.error = err && err.message ? err.message : String(err);
+        }
+        render();
+      }
+
+      async function toggleConversation(conversationId) {
+        if (state.expandedConvId === conversationId) {
+          state.expandedConvId = null;
+          render();
+          return;
+        }
+        state.expandedConvId = conversationId;
+        if (!state.convDetails.has(conversationId) && !state.convLoading.has(conversationId)) {
+          state.convLoading.add(conversationId);
+          render();
+          try {
+            const res = await callServerTool('get_conversation_detail', { conversationId });
+            if (res && res.structuredContent) {
+              state.convDetails.set(conversationId, res.structuredContent);
+            }
+          } catch (err) {
+            state.convDetails.set(conversationId, { error: err.message || String(err) });
+          } finally {
+            state.convLoading.delete(conversationId);
+          }
+        }
+        render();
+      }
+
+      async function connect() {
+        try {
+          const initRes = await sendRequest('ui/initialize', {
+            protocolVersion: PROTOCOL_VERSION,
+            appInfo: { name: 'Token Usage', version: '1.0.0' },
+            appCapabilities: {},
+          });
+          if (initRes) {
+            applyHostContext(initRes.hostContext);
+          }
+          sendNotification('ui/notifications/initialized', {});
+          render();
+          reportSize();
+
+          setTimeout(() => {
+            if (!receivedInitialResult && !state.data) {
+              fetchUsage();
+            }
+          }, 600);
+        } catch (err) {
+          state.loading = false;
+          state.error = t().initFailed + (err.message || String(err));
+          render();
+        }
+      }
+
+      function fmtCompact(n) {
+        const v = Number(n) || 0;
+        if (v >= 1_000_000_000) return (v / 1_000_000_000).toFixed(2) + 'B';
+        if (v >= 1_000_000) return (v / 1_000_000).toFixed(2) + 'M';
+        if (v >= 10_000) return (v / 1_000).toFixed(1) + 'K';
+        return v.toLocaleString();
+      }
+      function fmtExact(n) { return (Number(n) || 0).toLocaleString(); }
+      function fmtPct(r) { return ((Number(r) || 0) * 100).toFixed(1) + '%'; }
+      function fmtTime(iso) {
+        if (!iso) return '-';
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        const pad = (x) => String(x).padStart(2, '0');
+        return `${d.getMonth() + 1}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+      function esc(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      let searchDebounce = null;
+
+      function render() {
+        const root = document.getElementById('app');
+        if (!root) return;
+        const L = t();
+        document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : 'en';
+
+        const data = state.data;
+        const s = data ? data.summary : null;
+        const availableModels = data ? data.availableModels || [] : [];
+
+        const headerHtml = `
+          <div class="header">
+            <div class="title-group">
+              <div class="logo-badge">TK</div>
+              <div>
+                <h1>${esc(L.appTitle)}</h1>
+                <div class="subtitle">
+                  ${s ? esc(L.subtitleStats(s.conversationsCount, s.turnsCount, fmtTime(data.generatedAt))) : esc(L.loadingInit)}
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <div class="seg" role="tablist">
+                ${L.ranges
+                  .map(
+                    ([k, label]) =>
+                      `<button type="button" data-range="${k}" class="${state.range === k ? 'active' : ''}">${esc(label)}</button>`,
+                  )
+                  .join('')}
+              </div>
+              <select id="modelSelect" title="${esc(L.filterModelTitle)}">
+                <option value="all">${esc(L.allModels(availableModels.length))}</option>
+                ${availableModels
+                  .map(
+                    (m) =>
+                      `<option value="${esc(m)}" ${state.model === m ? 'selected' : ''}>${esc(m)}</option>`,
+                  )
+                  .join('')}
+              </select>
+              <button type="button" class="btn" id="refreshBtn" ${state.loading ? 'disabled' : ''}>
+                ${esc(state.loading ? L.refreshing : L.refresh)}
+              </button>
+              <button type="button" class="btn lang-btn" id="langBtn" title="${esc(L.langSwitchTitle)}">
+                ${esc(L.langSwitchLabel)}
+              </button>
+            </div>
+          </div>
+        `;
+
+        if (state.error && !data) {
+          root.innerHTML = headerHtml + `<div class="error-box">${esc(state.error)}</div>`;
+          bindEvents();
+          reportSize();
+          return;
+        }
+
+        if (!data) {
+          root.innerHTML = headerHtml + `<div class="loading">${esc(L.loadingData)}</div>`;
+          bindEvents();
+          reportSize();
+          return;
+        }
+
+        const total = Math.max(s.totalTokens, 1);
+        const pFresh = (s.inputTokens / total) * 100;
+        const pCache = (s.cacheReadTokens / total) * 100;
+        const pOut = (s.outputTokens / total) * 100;
+
+        const kpiHtml = `
+          <div class="kpi-grid">
+            <div class="kpi" title="${esc(L.exactTooltip(fmtExact(s.totalTokens)))}">
+              <div class="kpi-label"><span>${esc(L.kpiTotal)}</span><span class="badge">${esc(L.turnsBadge(s.turnsCount))}</span></div>
+              <div class="kpi-val">${fmtCompact(s.totalTokens)}</div>
+              <div class="kpi-sub">${esc(L.kpiTotalSub(fmtExact(s.totalTokens), fmtCompact(s.avgTokensPerTurn)))}</div>
+            </div>
+            <div class="kpi" title="${esc(L.exactTooltip(fmtExact(s.inputTokens)))}">
+              <div class="kpi-label"><span><span class="dot" style="background:var(--c-fresh)"></span>${esc(L.kpiFresh)}</span><span class="badge">${fmtPct(s.inputTokens / total)}</span></div>
+              <div class="kpi-val">${fmtCompact(s.inputTokens)}</div>
+              <div class="kpi-sub">${esc(L.kpiFreshSub(fmtCompact(s.totalInputTokens)))}</div>
+            </div>
+            <div class="kpi" title="${esc(L.exactTooltip(fmtExact(s.cacheReadTokens)))}">
+              <div class="kpi-label"><span><span class="dot" style="background:var(--c-cache)"></span>${esc(L.kpiCache)}</span><span class="badge badge-info">${esc(L.hitBadge(fmtPct(s.cacheHitRate)))}</span></div>
+              <div class="kpi-val">${fmtCompact(s.cacheReadTokens)}</div>
+              <div class="kpi-sub">${esc(L.kpiCacheSub(fmtPct(s.cacheHitRate)))}</div>
+            </div>
+            <div class="kpi" title="${esc(L.exactTooltip(fmtExact(s.outputTokens)))}">
+              <div class="kpi-label"><span><span class="dot" style="background:var(--c-output)"></span>${esc(L.kpiOutput)}</span><span class="badge badge-good">${esc(L.peakBadge(fmtCompact(s.peakContextTokens)))}</span></div>
+              <div class="kpi-val">${fmtCompact(s.outputTokens)}</div>
+              <div class="kpi-sub">${esc(L.kpiOutputSub(fmtCompact(s.peakContextTokens)))}</div>
+            </div>
+          </div>
+
+          <div class="comp-bar" title="${esc(L.compTitle(fmtPct(pFresh / 100), fmtPct(pCache / 100), fmtPct(pOut / 100)))}">
+            <div class="bar-fresh" style="width:${pFresh.toFixed(2)}%"></div>
+            <div class="bar-cache" style="width:${pCache.toFixed(2)}%"></div>
+            <div class="bar-output" style="width:${pOut.toFixed(2)}%"></div>
+          </div>
+        `;
+
+        const daily = data.daily || [];
+        const maxDay = daily.reduce((m, d) => Math.max(m, d.totalTokens), 1);
+        const hovered = state.hoveredDay
+          ? daily.find((d) => d.date === state.hoveredDay)
+          : daily[daily.length - 1];
+
+        const dailyHtml = `
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">${esc(L.dailyTitle)}</h2>
+              <div class="legend">
+                <span><span class="dot" style="background:var(--c-fresh)"></span>${esc(L.legendFresh)}</span>
+                <span><span class="dot" style="background:var(--c-cache)"></span>${esc(L.legendCache)}</span>
+                <span><span class="dot" style="background:var(--c-output)"></span>${esc(L.legendOutput)}</span>
+              </div>
+            </div>
+            ${
+              daily.length === 0
+                ? `<div class="subtitle">${esc(L.noDaily)}</div>`
+                : `
+              <div class="chart-wrap">
+                <div class="chart-bars">
+                  ${daily
+                    .map((d) => {
+                      const hTotal = Math.max(4, Math.round((d.totalTokens / maxDay) * 100));
+                      const hFresh = (d.inputTokens / Math.max(d.totalTokens, 1)) * 100;
+                      const hCache = (d.cacheReadTokens / Math.max(d.totalTokens, 1)) * 100;
+                      const hOut = (d.outputTokens / Math.max(d.totalTokens, 1)) * 100;
+                      return `
+                        <div class="bar-col" data-day="${esc(d.date)}" title="${esc(L.dayTooltip(d.date, fmtExact(d.totalTokens)))}">
+                          <div class="bar-stack" style="height:${hTotal}%">
+                            <div class="bar-fresh" style="height:${hFresh.toFixed(2)}%"></div>
+                            <div class="bar-cache" style="height:${hCache.toFixed(2)}%"></div>
+                            <div class="bar-output" style="height:${hOut.toFixed(2)}%"></div>
+                          </div>
+                          <div class="bar-label">${esc(d.date.slice(5))}</div>
+                        </div>
+                      `;
+                    })
+                    .join('')}
+                </div>
+                <div class="chart-hover" id="chartHover">
+                  ${
+                    hovered
+                      ? L.dayHover(
+                          esc(hovered.date),
+                          fmtCompact(hovered.totalTokens),
+                          fmtCompact(hovered.inputTokens),
+                          fmtCompact(hovered.cacheReadTokens),
+                          fmtCompact(hovered.outputTokens),
+                          hovered.turns,
+                        )
+                      : ''
+                  }
+                </div>
+              </div>
+            `
+            }
+          </div>
+        `;
+
+        const byModel = data.byModel || [];
+        const modelHtml = `
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">${esc(L.byModelTitle)}</h2>
+              <span class="subtitle">${esc(L.byModelHint)}</span>
+            </div>
+            ${
+              byModel.length === 0
+                ? `<div class="subtitle">${esc(L.noModels)}</div>`
+                : `
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>${esc(L.colModel)}</th>
+                      <th class="num">${esc(L.colChats)}</th>
+                      <th class="num">${esc(L.colTurns)}</th>
+                      <th class="num">${esc(L.colFresh)}</th>
+                      <th class="num">${esc(L.colCache)}</th>
+                      <th class="num">${esc(L.colOutput)}</th>
+                      <th class="num">${esc(L.colCacheHit)}</th>
+                      <th class="num">${esc(L.colTotal)}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${byModel
+                      .map(
+                        (m) => `
+                      <tr class="clickable-row ${state.model === m.model ? 'selected' : ''}" data-pick-model="${esc(m.model)}">
+                        <td><span class="model-pill">${esc(m.model)}</span></td>
+                        <td class="num">${m.conversations}</td>
+                        <td class="num">${m.turns}</td>
+                        <td class="num">${fmtCompact(m.inputTokens)}</td>
+                        <td class="num">${fmtCompact(m.cacheReadTokens)}</td>
+                        <td class="num">${fmtCompact(m.outputTokens)}</td>
+                        <td class="num">
+                          <span class="mini-bar"><span class="mini-bar-fill" style="width:${Math.round(m.cacheHitRate * 100)}%"></span></span>
+                          ${fmtPct(m.cacheHitRate)}
+                        </td>
+                        <td class="num"><strong>${fmtCompact(m.totalTokens)}</strong></td>
+                      </tr>
+                    `,
+                      )
+                      .join('')}
+                  </tbody>
+                </table>
+              </div>
+            `
+            }
+          </div>
+        `;
+
+        const convs = data.conversations || [];
+        const convHtml = `
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">${esc(L.convsTitle(data.totalConversationsMatched))}</h2>
+              <div class="controls">
+                <input type="search" id="searchInput" placeholder="${esc(L.searchPlaceholder)}" value="${esc(state.query)}" />
+                <select id="sortSelect" title="${esc(L.sortTitle)}">
+                  <option value="updatedAt" ${state.sortBy === 'updatedAt' ? 'selected' : ''}>${esc(L.sortRecent)}</option>
+                  <option value="totalTokens" ${state.sortBy === 'totalTokens' ? 'selected' : ''}>${esc(L.sortTotal)}</option>
+                  <option value="outputTokens" ${state.sortBy === 'outputTokens' ? 'selected' : ''}>${esc(L.sortOutput)}</option>
+                  <option value="turns" ${state.sortBy === 'turns' ? 'selected' : ''}>${esc(L.sortTurns)}</option>
+                </select>
+              </div>
+            </div>
+            ${
+              convs.length === 0
+                ? `<div class="subtitle">${esc(L.noConvs)}</div>`
+                : `
+              <div class="conv-list">
+                ${convs
+                  .map((c) => {
+                    const isExpanded = state.expandedConvId === c.conversationId;
+                    const detail = state.convDetails.get(c.conversationId);
+                    const isLoadingDetail = state.convLoading.has(c.conversationId);
+                    return `
+                      <div class="conv-item">
+                        <div class="conv-summary" data-conv="${esc(c.conversationId)}">
+                          <div class="conv-top">
+                            <div class="conv-title">${isExpanded ? '▾ ' : '▸ '}${esc(c.title)}</div>
+                            <div class="conv-total">${fmtCompact(c.totalTokens)}</div>
+                          </div>
+                          <div class="conv-meta">
+                            <div class="conv-metrics">
+                              <span>${fmtTime(c.updatedAt)}</span>
+                              <span>${esc(L.convTurns(c.turns))}</span>
+                              <span>${esc(L.convFresh(fmtCompact(c.inputTokens)))}</span>
+                              <span>${esc(L.convCache(fmtCompact(c.cacheReadTokens), fmtPct(c.cacheHitRate)))}</span>
+                              <span>${esc(L.convOut(fmtCompact(c.outputTokens)))}</span>
+                              <span>${esc(L.convPeak(fmtCompact(c.peakContextTokens)))}</span>
+                            </div>
+                            <div>
+                              ${c.models.map((m) => `<span class="model-pill">${esc(m)}</span>`).join(' ')}
+                            </div>
+                          </div>
+                        </div>
+                        ${
+                          isExpanded
+                            ? `<div class="conv-detail">${renderConvDetail(detail, isLoadingDetail, c.conversationId)}</div>`
+                            : ''
+                        }
+                      </div>
+                    `;
+                  })
+                  .join('')}
+              </div>
+            `
+            }
+          </div>
+        `;
+
+        root.innerHTML =
+          headerHtml +
+          (state.error ? `<div class="error-box">${esc(state.error)}</div>` : '') +
+          kpiHtml +
+          dailyHtml +
+          modelHtml +
+          convHtml;
+
+        bindEvents();
+        reportSize();
+      }
+
+      function renderConvDetail(detail, isLoading, convId) {
+        const L = t();
+        if (isLoading) return `<div class="subtitle">${esc(L.loadingDetail)}</div>`;
+        if (!detail) return `<div class="subtitle">${esc(L.noDetail)}</div>`;
+        if (detail.error) return `<div class="error-box">${esc(detail.error)}</div>`;
+
+        const steps = detail.steps || [];
+        return `
+          <div class="subtitle">${L.detailMeta(esc(convId), steps.length)}</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>${esc(L.colStep)}</th>
+                  <th>${esc(L.colTime)}</th>
+                  <th>${esc(L.colModel)}</th>
+                  <th class="num">${esc(L.colFresh)}</th>
+                  <th class="num">${esc(L.colCache)}</th>
+                  <th class="num">${esc(L.colContext)}</th>
+                  <th class="num">${esc(L.colOutput)}</th>
+                  <th class="num">${esc(L.colTurnTotal)}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${steps
+                  .map(
+                    (st) => `
+                  <tr>
+                    <td>#${st.stepIndex}</td>
+                    <td>${fmtTime(st.createdAt)}</td>
+                    <td><span class="model-pill">${esc(st.model)}</span></td>
+                    <td class="num">${fmtExact(st.inputTokens)}</td>
+                    <td class="num">${fmtExact(st.cacheReadTokens)}</td>
+                    <td class="num">${fmtExact(st.totalInputTokens)}</td>
+                    <td class="num">${fmtExact(st.outputTokens)}</td>
+                    <td class="num"><strong>${fmtExact(st.totalTokens)}</strong></td>
+                  </tr>
+                `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function bindEvents() {
+        const L = t();
+
+        document.querySelectorAll('[data-range]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const next = btn.getAttribute('data-range');
+            if (next && next !== state.range) {
+              state.range = next;
+              state.hoveredDay = null;
+              fetchUsage();
+            }
+          });
+        });
+
+        const modelSel = document.getElementById('modelSelect');
+        if (modelSel) {
+          modelSel.addEventListener('change', () => {
+            state.model = modelSel.value || 'all';
+            fetchUsage();
+          });
+        }
+
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+          refreshBtn.addEventListener('click', () => {
+            state.convDetails.clear();
+            fetchUsage();
+          });
+        }
+
+        const langBtn = document.getElementById('langBtn');
+        if (langBtn) {
+          langBtn.addEventListener('click', () => {
+            state.langUserPinned = true;
+            state.lang = state.lang === 'zh' ? 'en' : 'zh';
+            render();
+          });
+        }
+
+        const sortSel = document.getElementById('sortSelect');
+        if (sortSel) {
+          sortSel.addEventListener('change', () => {
+            state.sortBy = sortSel.value || 'updatedAt';
+            fetchUsage();
+          });
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('input', () => {
+            state.query = searchInput.value;
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+              fetchUsage();
+            }, 260);
+          });
+        }
+
+        document.querySelectorAll('[data-day]').forEach((col) => {
+          col.addEventListener('mouseenter', () => {
+            const day = col.getAttribute('data-day');
+            state.hoveredDay = day;
+            const d = state.data && state.data.daily && state.data.daily.find((x) => x.date === day);
+            const hoverEl = document.getElementById('chartHover');
+            if (d && hoverEl) {
+              hoverEl.innerHTML = L.dayHover(
+                esc(d.date),
+                fmtCompact(d.totalTokens),
+                fmtCompact(d.inputTokens),
+                fmtCompact(d.cacheReadTokens),
+                fmtCompact(d.outputTokens),
+                d.turns,
+              );
+            }
+          });
+        });
+
+        document.querySelectorAll('[data-pick-model]').forEach((row) => {
+          row.addEventListener('click', () => {
+            const m = row.getAttribute('data-pick-model');
+            state.model = state.model === m ? 'all' : m;
+            fetchUsage();
+          });
+        });
+
+        document.querySelectorAll('[data-conv]').forEach((el) => {
+          el.addEventListener('click', () => {
+            const id = el.getAttribute('data-conv');
+            if (id) toggleConversation(id);
+          });
+        });
+      }
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => reportSize());
+        ro.observe(document.body);
+      }
+
+      connect();
+    })();
+  </script>
+</body>
+</html>
